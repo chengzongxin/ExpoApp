@@ -6,7 +6,7 @@ export default function HomeScreen() {
     <View>
       <Text>Hello world</Text>
       <TouchableOpacity onPress={() => router.push('/(tabs)/serviceCategorySelection')}>
-        Go to Remote
+        <Text style={{color:'red', fontSize:20}}>Go to Service Category Selection</Text>
       </TouchableOpacity>
     </View>
   );

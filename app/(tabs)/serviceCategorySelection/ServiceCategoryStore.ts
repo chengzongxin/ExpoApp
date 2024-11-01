@@ -66,7 +66,7 @@ const data1 = {
           id: 73,
           parentId: 71,
           code: "PL0301",
-          name: "测试-二级",
+          name: "测试-二级1",
           remark: "",
           createTime: "2024-10-30 18:42:23",
           creatorName: "真实姓名",
@@ -79,7 +79,7 @@ const data1 = {
               id: 75,
               parentId: 73,
               code: "PL030101",
-              name: "测试-三级",
+              name: "测试-三级1",
               remark: "",
               createTime: "2024-10-30 18:43:11",
               creatorName: "真实姓名",
@@ -93,7 +93,7 @@ const data1 = {
               id: 81,
               parentId: 73,
               code: "PL030102",
-              name: "测试",
+              name: "测试-三级2",
               remark: "",
               createTime: "2024-10-31 11:25:17",
               creatorName: "真实姓名",
@@ -109,7 +109,7 @@ const data1 = {
           id: 78,
           parentId: 71,
           code: "PL0302",
-          name: "测试",
+          name: "测试-二级2",
           remark: "",
           createTime: "2024-10-31 11:24:47",
           creatorName: "真实姓名",
@@ -226,6 +226,10 @@ export default class ServiceCategoryStore {
 
   currentTabIdx: number = 0;
   currentTabName: string = '';
+
+  currentLevel1: ServiceTypeTreeDO | null = null;
+  currentLevel2: ServiceTypeTreeDO | null = null;
+  currentLevel3: ServiceTypeTreeDO | null = null;
 
   selectedCategories: ServiceTypeTreeDO[][] = [[], [], []];
   

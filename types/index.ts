@@ -29,4 +29,5 @@ export interface ServiceTypeTreeDO {
   sort: number;
   children: ServiceTypeTreeDO[]; // 递归定义子节点
   selected?: boolean;
+  checked?: boolean;
 }

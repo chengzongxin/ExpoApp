@@ -8,7 +8,6 @@ import {
   Image,
 } from "react-native";
 import { observer, useLocalObservable } from "mobx-react-lite";
-import { useLocalStore } from "mobx-react";
 import CustomCheckbox from "@/components/CustomCheckbox";
 import ServiceCategoryStore from "./ServiceCategoryStore";
 import CustomButton from "@/components/CustomButton";
@@ -41,6 +40,7 @@ export default observer(() => {
               store.currentTabName = item.serviceTypeName;
               store.currentTabIdx = index;
               console.log(store.currentTabName);
+              
               // store.currentLevel1Category =
               //   store.getSelectedCategoriesForCurrentTab()[0];
               // store.currentLevel2Category =
@@ -61,7 +61,7 @@ export default observer(() => {
                 </Text>
 
                 {(() => {
-                  const tab = item.serviceTypeName;
+                  // const tab = item.serviceTypeName;
                   let selectedCount = 0;
                   // if (tab === "测量") {
                   //   selectedCount = store.CategoriesSelected1.length;
@@ -70,7 +70,7 @@ export default observer(() => {
                   // } else if (tab === "维修") {
                   //   selectedCount = store.CategoriesSelected3.length;
                   // }
-                  selectedCount = store.selectedCategories[index].length;
+                  // selectedCount = store.selectedCategories[index].length;
                   console.log("Selected Count:", selectedCount); // 调试输出
                   return selectedCount > 0 ? (
                     <View style={styles.countView}>
@@ -95,25 +95,26 @@ export default observer(() => {
             <TouchableOpacity
               key={level1.id}
               onPress={() => {
-                // store.currentLevel1Category = level1;
-                // store.currentLevel2Category = level1?.children[0];
+                store.currentLevel2 = null;
+                store.currentLevel3 = null;
+                store.currentLevel1 = level1
               }}
             >
-              <View key={level1.id} style={[styles.subcategory]}>
+              <View style={[styles.subcategory]}>
                 <View style={styles.subcategorySecond}>
-                  {/* 如果有选中项，显示选中数量 */}
                   {(() => {
                     const selectedCount = store.getLowestLevelSelectedCount(level1.id);
-                    return selectedCount > 0 ? (<View style={styles.bluePoint} />) : null;
+                    return selectedCount > 0 ? (
+                      <View style={styles.bluePoint} />
+                    ) : null;
                   })()}
                 </View>
                 <View style={styles.subcategoryFirst}>
                   <Text
                     style={
-                      // store.currentLevel1Category?.id === level1.id
-                      //   ? styles.activeCategoryTextSel
-                      //   : styles.activeCategoryText
-                      {}
+                      store.currentLevel1?.id === level1.id
+                        ? styles.activeCategoryTextSel
+                        : styles.activeCategoryText
                     }
                   >
                     {level1.name}
@@ -134,15 +135,15 @@ export default observer(() => {
 
         {/* 中间：二级目录 */}
         <ScrollView style={styles.middlePanel}>
-          {store.currentLevel1Category?.children?.map((subcategory) => (
+          {store.currentLevel1?.children?.map((level2) => (
             <TouchableOpacity
-              key={subcategory.id}
-              onPress={() => (store.currentLevel2Category = subcategory)}
+              key={level2.id}
+              onPress={() => (store.currentLevel2 = level2)}
             >
               <View
-                key={subcategory.id}
+                key={level2.id}
                 style={
-                  store.currentLevel2Category?.id === subcategory.id
+                  store.currentLevel2?.id === level2.id
                     ? styles.subcategorySel2
                     : styles.subcategory2
                 }
@@ -151,7 +152,7 @@ export default observer(() => {
                   {/* 如果有选中项，显示选中数量 */}
                   {(() => {
                     const selectedCount = store.getLowestLevelSelectedCount(
-                      subcategory.id
+                      level2.id
                     );
                     return selectedCount > 0 ? (
                       <View style={styles.bluePoint} />
@@ -161,18 +162,18 @@ export default observer(() => {
                 <View style={styles.subcategoryFirst}>
                   <Text
                     style={
-                      store.currentLevel2Category?.id === subcategory.id
+                      store.currentLevel2?.id === level2.id
                         ? styles.activeCategoryTextSel
                         : styles.activeCategoryText
                     }
                   >
-                    {subcategory.name}
+                    {level2.name}
                   </Text>
                   <CustomCheckbox
-                    checked={subcategory.selected}
+                    checked={level2.selected}
                     onChange={(checked) => {
-                      store.currentLevel2Category = subcategory;
-                      store.setSelected(subcategory.id, checked);
+                      store.currentLevel2 = level2;
+                      // store.setSelected(level2.id, checked);
                     }}
                   />
                 </View>
@@ -183,29 +184,32 @@ export default observer(() => {
 
         {/* 右侧：三级目录 */}
         <ScrollView style={styles.rightPanel}>
-          {store.currentLevel2Category?.children?.map((subcategory) => (
-            <View key={subcategory.id} style={styles.subcategory3}>
+          {store.currentLevel2?.children?.map((level3) => (
+            <View key={level3.id} style={styles.subcategory3}>
               <TouchableOpacity
-                key={subcategory.id}
-                onPress={() =>
-                  store.setSelected(subcategory.id, !subcategory.selected)
-                }
+                key={level3.id} 
+                onPress={() => {
+                  console.log('level3', level3);
+                  store.currentLevel3 = level3;
+                  // store.setSelected(level3.id, !level3.selected)
+                }}
               >
                 <Text
                   style={
-                    subcategory.selected
+                    level3.id === store.currentLevel3?.id
                       ? styles.subcategory3SelTv
                       : styles.subcategory3Tv
                   }
                 >
-                  {subcategory.name}
+                  {level3.name}
                 </Text>
               </TouchableOpacity>
               <CustomCheckbox
-                checked={subcategory.selected}
-                onChange={(checked) =>
-                  store.setSelected(subcategory.id, checked)
-                }
+                checked={level3.selected}
+                onChange={(checked) => {
+                  console.log('level3', level3);
+                  // store.setSelected(level3.id, checked)
+                }}
               />
             </View>
           ))}
@@ -218,33 +222,33 @@ export default observer(() => {
         style={styles.submitButton}
         onPress={() => {
           // 根据页面来源决定是否调用 setMasterServiceTypes 方法
-          if (from === "settled") {
-            // registrationStore.setField('serviceType',Object.values(store.combineCategories()).join(','))
-            // {"1001": [37, 36, 35, 59, 8], "1002": [], "1003": []}
-            // 将 store.combineCategories() 的所有值合并为一维数组
-            const combinedCategories = Object.values(
-              store.combineCategories()
-            ).flat();
-            console.log("====================================");
-            console.log(
-              "combineCategories",
-              from === "settled",
-              combinedCategories,
-              store.combineCategories()
-            );
-            console.log("====================================");
-            // 将合并后的数组转换为字符串并设置到 registrationStore
-            registrationStore.setField(
-              "serviceType",
-              store.combineCategories()
-            );
-            registrationStore.setServiceTypeDisplay(
-              store.combineCategoriesForDisplay().join(",")
-            );
-          } else {
-            store.setMasterServiceTypes();
-          }
-          router.back();
+          // if (from === "settled") {
+          //   // registrationStore.setField('serviceType',Object.values(store.combineCategories()).join(','))
+          //   // {"1001": [37, 36, 35, 59, 8], "1002": [], "1003": []}
+          //   // 将 store.combineCategories() 的所有值合并为一维数组
+          //   const combinedCategories = Object.values(
+          //     store.combineCategories()
+          //   ).flat();
+          //   console.log("====================================");
+          //   console.log(
+          //     "combineCategories",
+          //     from === "settled",
+          //     combinedCategories,
+          //     store.combineCategories()
+          //   );
+          //   console.log("====================================");
+          //   // 将合并后的数组转换为字符串并设置到 registrationStore
+          //   registrationStore.setField(
+          //     "serviceType",
+          //     store.combineCategories()
+          //   );
+          //   registrationStore.setServiceTypeDisplay(
+          //     store.combineCategoriesForDisplay().join(",")
+          //   );
+          // } else {
+          //   store.setMasterServiceTypes();
+          // }
+          // router.back();
         }}
       >
         <Text style={styles.submitText}>确认提交</Text>
