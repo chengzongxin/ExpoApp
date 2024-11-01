@@ -227,11 +227,16 @@ export default class ServiceCategoryStore {
   currentTabIdx: number = 0;
   currentTabName: string = '';
 
-  currentLevel1: ServiceTypeTreeDO | null = null;
-  currentLevel2: ServiceTypeTreeDO | null = null;
-  currentLevel3: ServiceTypeTreeDO | null = null;
+  selectedLevel1: ServiceTypeTreeDO | null = null;
+  selectedLevel2: ServiceTypeTreeDO | null = null;
+  selectedLevel3: ServiceTypeTreeDO | null = null;
 
-  selectedCategories: ServiceTypeTreeDO[][] = [[], [], []];
+  checkedLevel1: ServiceTypeTreeDO | null = null;
+  checkedLevel2: ServiceTypeTreeDO | null = null;
+  checkedLevel3: ServiceTypeTreeDO | null = null;
+
+  selectedCategories: ServiceTypeTreeDO[][][] = [[[]], [[]], [[]]];
+  checkedCategories: ServiceTypeTreeDO[][][] = [[[]], [[]], [[]]];
   
   
   constructor() {
@@ -253,6 +258,21 @@ export default class ServiceCategoryStore {
     const { code, data } = result;
     if (code === 200) {
       this.categoryTree = data;
+    }
+  }
+
+  checkLevel(tabIdx: number, level: number, checked: boolean, item: ServiceTypeTreeDO) {
+    if (level === 1) {
+      this.checkedLevel1 = checked ? this.selectedLevel1 : null;
+    } else if (level === 2) {
+      
+    } else if (level === 3) {
+      console.log('checkedLevel3', checked);
+      // if (checked) {
+      //   this.checkedCategories[tabIdx][level - 1].push(item);
+      // } else {
+      //   this.checkedCategories[tabIdx][level - 1] = this.checkedCategories[tabIdx][level - 1].filter(item => item.id !== item.id);
+      // }
     }
   }
 

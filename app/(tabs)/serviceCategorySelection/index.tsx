@@ -41,10 +41,10 @@ export default observer(() => {
               store.currentTabIdx = index;
               console.log(store.currentTabName);
 
-              // store.currentLevel1Category =
+              // store.selectedLevel1Category =
               //   store.getSelectedCategoriesForCurrentTab()[0];
-              // store.currentLevel2Category =
-              //   store.currentLevel1Category?.children[0];
+              // store.selectedLevel2Category =
+              //   store.selectedLevel1Category?.children[0];
             }}
             style={styles.tab}
           >
@@ -95,9 +95,9 @@ export default observer(() => {
             <TouchableOpacity
               key={level1.id}
               onPress={() => {
-                store.currentLevel2 = null;
-                store.currentLevel3 = null;
-                store.currentLevel1 = level1
+                store.selectedLevel2 = null;
+                store.selectedLevel3 = null;
+                store.selectedLevel1 = level1
               }}
             >
               <View style={[styles.subcategory]}>
@@ -112,7 +112,7 @@ export default observer(() => {
                 <View style={styles.subcategoryFirst}>
                   <Text
                     style={
-                      store.currentLevel1?.id === level1.id
+                      store.selectedLevel1?.id === level1.id
                         ? styles.activeCategoryTextSel
                         : styles.activeCategoryText
                     }
@@ -122,8 +122,8 @@ export default observer(() => {
                   <CustomCheckbox
                     checked={level1.selected}
                     onChange={(checked) => {
-                      // store.currentLevel1Category = level1;
-                      // store.currentLevel2Category = level1?.children[0];
+                      // store.selectedLevel1Category = level1;
+                      // store.selectedLevel2Category = level1?.children[0];
                       // store.setSelected(level1.id, checked);
                     }}
                   />
@@ -135,15 +135,15 @@ export default observer(() => {
 
         {/* 中间：二级目录 */}
         <ScrollView style={styles.middlePanel}>
-          {store.currentLevel1?.children?.map((level2) => (
+          {store.selectedLevel1?.children?.map((level2) => (
             <TouchableOpacity
               key={level2.id}
-              onPress={() => (store.currentLevel2 = level2)}
+              onPress={() => (store.selectedLevel2 = level2)}
             >
               <View
                 key={level2.id}
                 style={
-                  store.currentLevel2?.id === level2.id
+                  store.selectedLevel2?.id === level2.id
                     ? styles.subcategorySel2
                     : styles.subcategory2
                 }
@@ -162,7 +162,7 @@ export default observer(() => {
                 <View style={styles.subcategoryFirst}>
                   <Text
                     style={
-                      store.currentLevel2?.id === level2.id
+                      store.selectedLevel2?.id === level2.id
                         ? styles.activeCategoryTextSel
                         : styles.activeCategoryText
                     }
@@ -172,7 +172,7 @@ export default observer(() => {
                   <CustomCheckbox
                     checked={level2.selected}
                     onChange={(checked) => {
-                      store.currentLevel2 = level2;
+                      store.selectedLevel2 = level2;
                       // store.setSelected(level2.id, checked);
                     }}
                   />
@@ -184,19 +184,19 @@ export default observer(() => {
 
         {/* 右侧：三级目录 */}
         <ScrollView style={styles.rightPanel}>
-          {store.currentLevel2?.children?.map((level3) => (
+          {store.selectedLevel2?.children?.map((level3) => (
             <View key={level3.id} style={styles.subcategory3}>
               <TouchableOpacity
                 key={level3.id}
                 onPress={() => {
                   console.log('level3', level3);
-                  store.currentLevel3 = level3;
+                  store.selectedLevel3 = level3;
                   // store.setSelected(level3.id, !level3.selected)
                 }}
               >
                 <Text
                   style={
-                    level3.id === store.currentLevel3?.id
+                    level3.id === store.selectedLevel3?.id
                       ? styles.subcategory3SelTv
                       : styles.subcategory3Tv
                   }
@@ -205,9 +205,11 @@ export default observer(() => {
                 </Text>
               </TouchableOpacity>
               <CustomCheckbox
-                checked={level3.selected}
+                checked={level3.checked}
                 onChange={(checked) => {
-                  console.log('level3', level3);
+                  console.log('level3', checked);
+                  level3.checked = checked;
+                  // store.checkedLevel3 = level3;
                   // store.setSelected(level3.id, checked)
                 }}
               />
