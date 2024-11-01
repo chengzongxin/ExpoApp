@@ -40,7 +40,7 @@ export default observer(() => {
               store.currentTabName = item.serviceTypeName;
               store.currentTabIdx = index;
               console.log(store.currentTabName);
-              
+
               // store.currentLevel1Category =
               //   store.getSelectedCategoriesForCurrentTab()[0];
               // store.currentLevel2Category =
@@ -187,7 +187,7 @@ export default observer(() => {
           {store.currentLevel2?.children?.map((level3) => (
             <View key={level3.id} style={styles.subcategory3}>
               <TouchableOpacity
-                key={level3.id} 
+                key={level3.id}
                 onPress={() => {
                   console.log('level3', level3);
                   store.currentLevel3 = level3;
