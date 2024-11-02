@@ -9,16 +9,29 @@ import {
 import { observer, useLocalObservable } from "mobx-react-lite";
 import ServiceCategoryCheckStore from "./serviceCategoryCheckStore";
 import CustomButton from "@/components/CustomButton";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { ServiceTypeTreeDO } from "@/types";
 
 export default observer(() => {
   const store = useLocalObservable(() => new ServiceCategoryCheckStore());
+  const { selectedCategories } = useLocalSearchParams<{ selectedCategories: string }>();
   const [currentServiceType, setCurrentServiceType] = useState('LX001');
   const [selectedTree, setSelectedTree] = useState<ServiceTypeTreeDO[]>([]);
 
   useEffect(() => {
-    // 当切换服务类型时，更新选中的树结构
+    // 如果有传入的选择数据，则使用传入的数据
+    if (selectedCategories) {
+      try {
+        const parsedCategories = JSON.parse(selectedCategories);
+        store.setSelectedCategories(parsedCategories);
+      } catch (error) {
+        console.error('Failed to parse selectedCategories:', error);
+      }
+    }
+  }, [selectedCategories]);
+
+  useEffect(() => {
+    // 当切换服务类型或选中数据变化时，更新选中的树结构
     const selectedNodes = store.selectedCategories[currentServiceType] || [];
     const tree = store.getSelectedCategoriesTree(store.categoryTree, selectedNodes);
     setSelectedTree(tree);

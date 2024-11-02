@@ -13,12 +13,18 @@ export default class ServiceCategoryCheckStore {
   selectedCategories: Record<string, string[]> = {};
   categoryTree: ServiceTypeTreeDO[] = [];
 
-  constructor() {
+  constructor(initialSelectedCategories?: Record<string, string[]>) {
     makeAutoObservable(this);
     this.fetchServiceTypes();
     this.getCategoriesTree();
-    this.getSelectedCategories();
-    this.getSelectedCategoriesTree(this.categoryTree, this.selectedCategories['LX001']);
+    
+    // 如果有传入初始选择数据，则使用传入的数据
+    if (initialSelectedCategories) {
+      this.selectedCategories = initialSelectedCategories;
+    } else {
+      // 否则获取默认数据
+      this.getSelectedCategories();
+    }
   }
 
   async getCategoriesTree() {

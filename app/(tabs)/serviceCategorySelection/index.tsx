@@ -174,13 +174,13 @@ export default observer(() => {
 
   const handleSubmit = () => {
     const result = store.getResultData();
-    const displayData = store.getResultDataForDisplay();
-    console.log("====================================");
-    console.log("result", result);
-    console.log("====================================");
-    console.log("displayData", displayData);
-    console.log("====================================");
-  }
+    router.push({
+      pathname: '/(tabs)/serviceCategoryCheck',
+      params: {
+        selectedCategories: JSON.stringify(result)
+      }
+    });
+  };
 
   return (
     <View style={styles.container}>
