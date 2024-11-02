@@ -12,6 +12,7 @@ import CustomCheckbox from "@/components/CustomCheckbox";
 import ServiceCategoryStore from "./ServiceCategoryStore";
 import CustomButton from "@/components/CustomButton";
 import { router, useLocalSearchParams } from "expo-router";
+import { ServiceTypeConfig, ServiceTypeTreeDO } from "@/types";
 
 const images = {
   waringIcon: require("@/assets/images/common/icon_wrang.png"),
@@ -20,6 +21,42 @@ const images = {
 export default observer(() => {
   const store = useLocalObservable(() => new ServiceCategoryStore());
   const { from } = useLocalSearchParams();
+
+  const handleTabPress = (tab: ServiceTypeConfig, index: number) => {
+    store.selectedLevel1 = null;
+    store.selectedLevel2 = null;
+    store.selectedLevel3 = null;
+    store.currentTabName = tab.serviceTypeName;
+    store.currentTabIdx = index;
+  }
+
+  const handleLevel1Press = (level1: ServiceTypeTreeDO) => {
+    store.selectedLevel2 = null;
+    store.selectedLevel3 = null;
+    store.selectedLevel1 = level1;
+  }
+
+  const handleLevel2Press = (level2: ServiceTypeTreeDO) => {
+    store.selectedLevel3 = null;
+    store.selectedLevel2 = level2;
+  }
+
+  const handleLevel3Press = (level3: ServiceTypeTreeDO) => {
+    store.selectedLevel3 = level3;
+  }
+
+  const handleLevel1CheckboxChange = (level1: ServiceTypeTreeDO, checked: boolean) => {
+    store.checkTree(level1, 1, checked);
+  }
+
+  const handleLevel2CheckboxChange = (level2: ServiceTypeTreeDO, checked: boolean) => {
+    store.checkTree(level2, 2, checked);
+  }
+
+  const handleLevel3CheckboxChange = (level3: ServiceTypeTreeDO, checked: boolean) => {
+    level3.checked = checked;
+    store.checkTree(level3, 3, checked);
+  }
 
   return (
     <View style={styles.container}>
@@ -37,14 +74,7 @@ export default observer(() => {
           <TouchableOpacity
             key={index}
             onPress={() => {
-              store.currentTabName = item.serviceTypeName;
-              store.currentTabIdx = index;
-              console.log(store.currentTabName);
-
-              // store.selectedLevel1Category =
-              //   store.getSelectedCategoriesForCurrentTab()[0];
-              // store.selectedLevel2Category =
-              //   store.selectedLevel1Category?.children[0];
+              handleTabPress(item, index);
             }}
             style={styles.tab}
           >
@@ -91,13 +121,11 @@ export default observer(() => {
       <View style={styles.categoryContainer}>
         {/* 左侧：一级目录 */}
         <ScrollView style={styles.leftPanel}>
-          {store.categoryTree.map((level1) => (
+          {store.getCurrentCategoryTree().map((level1) => (
             <TouchableOpacity
               key={level1.id}
               onPress={() => {
-                store.selectedLevel2 = null;
-                store.selectedLevel3 = null;
-                store.selectedLevel1 = level1
+                handleLevel1Press(level1);
               }}
             >
               <View style={[styles.subcategory]}>
@@ -121,10 +149,8 @@ export default observer(() => {
                   </Text>
                   <CustomCheckbox
                     checked={level1.selected}
-                    onChange={(checked) => {
-                      // store.selectedLevel1Category = level1;
-                      // store.selectedLevel2Category = level1?.children[0];
-                      // store.setSelected(level1.id, checked);
+                      onChange={(checked) => {
+                        handleLevel1CheckboxChange(level1, checked);
                     }}
                   />
                 </View>
@@ -138,7 +164,9 @@ export default observer(() => {
           {store.selectedLevel1?.children?.map((level2) => (
             <TouchableOpacity
               key={level2.id}
-              onPress={() => (store.selectedLevel2 = level2)}
+              onPress={() => {
+                handleLevel2Press(level2);
+              }}
             >
               <View
                 key={level2.id}
@@ -172,8 +200,7 @@ export default observer(() => {
                   <CustomCheckbox
                     checked={level2.selected}
                     onChange={(checked) => {
-                      store.selectedLevel2 = level2;
-                      // store.setSelected(level2.id, checked);
+                      handleLevel2CheckboxChange(level2, checked);
                     }}
                   />
                 </View>
@@ -189,9 +216,7 @@ export default observer(() => {
               <TouchableOpacity
                 key={level3.id}
                 onPress={() => {
-                  console.log('level3', level3);
-                  store.selectedLevel3 = level3;
-                  // store.setSelected(level3.id, !level3.selected)
+                  handleLevel3Press(level3);
                 }}
               >
                 <Text
@@ -207,10 +232,7 @@ export default observer(() => {
               <CustomCheckbox
                 checked={level3.checked}
                 onChange={(checked) => {
-                  console.log('level3', checked);
-                  level3.checked = checked;
-                  // store.checkedLevel3 = level3;
-                  // store.setSelected(level3.id, checked)
+                  handleLevel3CheckboxChange(level3, checked);
                 }}
               />
             </View>

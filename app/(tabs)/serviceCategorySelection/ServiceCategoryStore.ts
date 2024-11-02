@@ -2,6 +2,7 @@ import { makeAutoObservable } from 'mobx';
 import { ServiceTypeConfig, ServiceTypeTreeDO } from '@/types';
 
 
+
 const data1 = {
   code: 200,
   data: [
@@ -222,11 +223,14 @@ const data2 = {
 
 export default class ServiceCategoryStore {
   serviceTypes: ServiceTypeConfig[] = [];
-  categoryTree: ServiceTypeTreeDO[] = [];
+  categoryTree1: ServiceTypeTreeDO[] = [];
+  categoryTree2: ServiceTypeTreeDO[] = [];
+  categoryTree3: ServiceTypeTreeDO[] = [];
 
   currentTabIdx: number = 0;
   currentTabName: string = '';
 
+  // 设置选择高亮
   selectedLevel1: ServiceTypeTreeDO | null = null;
   selectedLevel2: ServiceTypeTreeDO | null = null;
   selectedLevel3: ServiceTypeTreeDO | null = null;
@@ -253,13 +257,70 @@ export default class ServiceCategoryStore {
     }
   }
 
+  deepCopy<T>(obj: T): T {
+    return JSON.parse(JSON.stringify(obj));
+  }
+
   async getCategoriesTree() {
     const result = data1;
     const { code, data } = result;
     if (code === 200) {
-      this.categoryTree = data;
+      this.categoryTree1 = this.deepCopy(data);
+      this.categoryTree2 = this.deepCopy(data);
+      this.categoryTree3 = this.deepCopy(data);
     }
   }
+
+  getCurrentCategoryTree(): ServiceTypeTreeDO[] {
+    if (this.currentTabIdx === 0) {
+      return this.categoryTree1;
+    } else if (this.currentTabIdx === 1) {
+      return this.categoryTree2;
+    } else if (this.currentTabIdx === 2) {
+      return this.categoryTree3;
+    }
+    return [];
+  }
+
+  checkTree(item: ServiceTypeTreeDO, level: number, checked: boolean) {
+    const tree = this.getCurrentCategoryTree();
+    if (level === 1) {
+      // this.checkedLevel1 = checked ? item : null;
+    } else if (level === 2) {
+      // this.checkedLevel2 = checked ? item : null;
+    } else if (level === 3) {
+      // this.checkedLevel3 = checked ? item : null;
+      const foundNode = this.findNodeById(item.id);
+      if (foundNode) {
+        this.checkedLevel3 = checked ? foundNode : null;
+      }
+    }
+  }
+
+
+  findNodeById(id: number): ServiceTypeTreeDO | null {
+    const tree = this.getCurrentCategoryTree();
+    const foundNode = this.findNodeInTree(tree, id);
+    return foundNode;
+  }
+
+  findNodeInTree(tree: ServiceTypeTreeDO[], id: number): ServiceTypeTreeDO | null {
+    let foundNode: ServiceTypeTreeDO | null = null;
+    for (let i = 0; i < tree.length; i++) {
+      if (tree[i].id === id) {
+        foundNode = tree[i];
+        break;
+      }
+      if (tree[i].children && tree[i].children.length > 0) {
+        foundNode = this.findNodeInTree(tree[i].children, id);
+        if (foundNode) {
+          break;
+        }
+      }
+    }
+    return foundNode;
+  }
+
 
   checkLevel(tabIdx: number, level: number, checked: boolean, item: ServiceTypeTreeDO) {
     if (level === 1) {
