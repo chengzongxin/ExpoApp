@@ -172,6 +172,16 @@ export default observer(() => {
     return checkedNodes;
   };
 
+  const handleSubmit = () => {
+    const result = store.getResultData();
+    const displayData = store.getResultDataForDisplay();
+    console.log("====================================");
+    console.log("result", result);
+    console.log("====================================");
+    console.log("displayData", displayData);
+    console.log("====================================");
+  }
+
   return (
     <View style={styles.container}>
       {/* 黄色提示 */}
@@ -346,36 +356,7 @@ export default observer(() => {
       <CustomButton
         disabled={store.getAllCheckedNodes().length===0}
         style={styles.submitButton}
-        onPress={() => {
-          // 根据页面来源决定是否调用 setMasterServiceTypes 方法
-          // if (from === "settled") {
-          //   // registrationStore.setField('serviceType',Object.values(store.combineCategories()).join(','))
-          //   // {"1001": [37, 36, 35, 59, 8], "1002": [], "1003": []}
-          //   // 将 store.combineCategories() 的所有值合并为一维数组
-          //   const combinedCategories = Object.values(
-          //     store.combineCategories()
-          //   ).flat();
-          //   console.log("====================================");
-          //   console.log(
-          //     "combineCategories",
-          //     from === "settled",
-          //     combinedCategories,
-          //     store.combineCategories()
-          //   );
-          //   console.log("====================================");
-          //   // 将合并后的数组转换为字符串并设置到 registrationStore
-          //   registrationStore.setField(
-          //     "serviceType",
-          //     store.combineCategories()
-          //   );
-          //   registrationStore.setServiceTypeDisplay(
-          //     store.combineCategoriesForDisplay().join(",")
-          //   );
-          // } else {
-          //   store.setMasterServiceTypes();
-          // }
-          // router.back();
-        }}
+        onPress={handleSubmit}
       >
         <Text style={styles.submitText}>确认提交</Text>
       </CustomButton>

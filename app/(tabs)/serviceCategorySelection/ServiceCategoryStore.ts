@@ -304,4 +304,25 @@ export default class ServiceCategoryStore {
   getAllCheckedNodes(): ServiceTypeTreeDO[] {
     return [...this.categoryCheckedNodes1, ...this.categoryCheckedNodes2, ...this.categoryCheckedNodes3];
   }
+
+  getResultData(): Record<string, string[]> {
+    // return {"LX001":["1"],"LX002":["2"],"LX003":["3"]};
+    const result: Record<string, string[]> = {};
+    if (this.serviceTypes.length > 0) {
+      this.serviceTypes.forEach((item, index) => {
+        const checkedNodes = this.getCurrentCheckedNodes(index).map(node => node.id.toString());
+        result[item.serviceTypeCode] = checkedNodes;
+      });
+    }
+    return result;
+  }
+
+  getResultDataForDisplay(): string {
+    let displayData = '';
+    this.serviceTypes.forEach((item, index) => {
+      const checkedNodes = this.getCurrentCheckedNodes(index).map(node => node.name);
+      displayData += `${item.serviceTypeName}: ${checkedNodes.join(",")} `;
+    });
+    return displayData.trim();
+  }
 }
