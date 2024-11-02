@@ -50,33 +50,41 @@ export default observer(() => {
     );
   };
 
-  // 递归渲染品类树
+  // 修改递归渲染品类树的函数
   const renderCategoryTree = (nodes: ServiceTypeTreeDO[]) => {
-    return nodes.map((node) => (
-      <View key={node.id} style={styles.categorySection}>
-        <Text style={styles.sectionTitle}>{node.name}</Text>
-        {node.children && node.children.length > 0 ? (
-          <View style={styles.categoryItem}>
-            <Text style={styles.categoryName}>
-              {node.children.map(child => 
-                child.children && child.children.length > 0 
-                  ? child.children.map(subChild => subChild.name).join('、')
-                  : child.name
-              ).join('、')}
-            </Text>
-          </View>
-        ) : null}
-        {node.children?.map(child => 
-          child.children && child.children.length > 0 ? (
-            <View key={child.id} style={[styles.categorySection, styles.childSection]}>
-              <Text style={styles.sectionSubtitle}>{child.name}</Text>
-              <View style={styles.categoryItem}>
-                <Text style={styles.categoryName}>
-                  {child.children.map(subChild => subChild.name).join('、')}
-                </Text>
-              </View>
+    return nodes.map((level1) => (
+      <View key={level1.id} style={styles.categorySection}>
+        {/* 一级节点作为标题 */}
+        <Text style={styles.sectionTitle}>{level1.name}</Text>
+        
+        {/* 二三级节点的容器 */}
+        {level1.children && level1.children.length > 0 && (
+          <View style={styles.levelContainer}>
+            {/* 左侧：二级节点列表 */}
+            <View style={styles.level2Container}>
+              {level1.children.map((level2) => (
+                <TouchableOpacity 
+                  key={level2.id}
+                  style={styles.level2Item}
+                >
+                  <Text style={styles.level2Text}>{level2.name}</Text>
+                </TouchableOpacity>
+              ))}
             </View>
-          ) : null
+
+            {/* 右侧：三级节点列表 */}
+            <View style={styles.level3Container}>
+              {level1.children.map((level2) => 
+                level2.children && level2.children.length > 0 ? (
+                  <View key={level2.id} style={styles.level3Wrapper}>
+                    <Text style={styles.level3Names}>
+                      {level2.children.map(level3 => level3.name).join('、')}
+                    </Text>
+                  </View>
+                ) : null
+              )}
+            </View>
+          </View>
         )}
       </View>
     ));
@@ -186,31 +194,44 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   categorySection: {
-    marginTop: 12,
-  },
-  childSection: {
-    marginLeft: 12,
-    marginTop: 8,
+    marginTop: 16,
+    backgroundColor: '#fff',
   },
   sectionTitle: {
-    fontSize: 14,
+    fontSize: 15,
     color: "#303133",
     fontWeight: "500",
-    marginBottom: 8,
+    marginBottom: 12,
   },
-  sectionSubtitle: {
-    fontSize: 13,
-    color: "#606266",
-    marginBottom: 8,
-  },
-  categoryItem: {
-    backgroundColor: "#F5F7FA",
-    padding: 12,
+  levelContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#F5F7FA',
     borderRadius: 4,
+    padding: 12,
   },
-  categoryName: {
+  level2Container: {
+    flex: 2, // 占据左侧较小空间
+    borderRightWidth: 1,
+    borderRightColor: '#EBEEF5',
+    paddingRight: 12,
+  },
+  level2Item: {
+    paddingVertical: 8,
+  },
+  level2Text: {
     fontSize: 14,
-    color: "#606266",
+    color: '#606266',
+  },
+  level3Container: {
+    flex: 3, // 占据右侧较大空间
+    paddingLeft: 12,
+  },
+  level3Wrapper: {
+    paddingVertical: 8,
+  },
+  level3Names: {
+    fontSize: 14,
+    color: '#606266',
     lineHeight: 20,
   },
   submitButton: {
