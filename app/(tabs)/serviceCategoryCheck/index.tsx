@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -10,9 +10,19 @@ import { observer, useLocalObservable } from "mobx-react-lite";
 import ServiceCategoryCheckStore from "./serviceCategoryCheckStore";
 import CustomButton from "@/components/CustomButton";
 import { router } from "expo-router";
+import { ServiceTypeTreeDO } from "@/types";
 
 export default observer(() => {
   const store = useLocalObservable(() => new ServiceCategoryCheckStore());
+  const [currentServiceType, setCurrentServiceType] = useState('LX001');
+  const [selectedTree, setSelectedTree] = useState<ServiceTypeTreeDO[]>([]);
+
+  useEffect(() => {
+    // 当切换服务类型时，更新选中的树结构
+    const selectedNodes = store.selectedCategories[currentServiceType] || [];
+    const tree = store.getSelectedCategoriesTree(store.categoryTree, selectedNodes);
+    setSelectedTree(tree);
+  }, [currentServiceType, store.selectedCategories]);
 
   // 渲染服务类型Tab
   const renderServiceTypeTab = (
@@ -20,13 +30,15 @@ export default observer(() => {
     index: number
   ) => {
     const selectedCount = store.getSelectedCount(item.serviceTypeCode);
+    const isActive = currentServiceType === item.serviceTypeCode;
     
     return (
       <TouchableOpacity 
         key={index}
-        style={styles.tabItem}
+        style={[styles.tabItem, isActive && styles.activeTabItem]}
+        onPress={() => setCurrentServiceType(item.serviceTypeCode)}
       >
-        <Text style={styles.tabText}>
+        <Text style={[styles.tabText, isActive && styles.activeTabText]}>
           {item.serviceTypeName}
         </Text>
         {selectedCount > 0 && (
@@ -38,6 +50,38 @@ export default observer(() => {
     );
   };
 
+  // 递归渲染品类树
+  const renderCategoryTree = (nodes: ServiceTypeTreeDO[]) => {
+    return nodes.map((node) => (
+      <View key={node.id} style={styles.categorySection}>
+        <Text style={styles.sectionTitle}>{node.name}</Text>
+        {node.children && node.children.length > 0 ? (
+          <View style={styles.categoryItem}>
+            <Text style={styles.categoryName}>
+              {node.children.map(child => 
+                child.children && child.children.length > 0 
+                  ? child.children.map(subChild => subChild.name).join('、')
+                  : child.name
+              ).join('、')}
+            </Text>
+          </View>
+        ) : null}
+        {node.children?.map(child => 
+          child.children && child.children.length > 0 ? (
+            <View key={child.id} style={[styles.categorySection, styles.childSection]}>
+              <Text style={styles.sectionSubtitle}>{child.name}</Text>
+              <View style={styles.categoryItem}>
+                <Text style={styles.categoryName}>
+                  {child.children.map(subChild => subChild.name).join('、')}
+                </Text>
+              </View>
+            </View>
+          ) : null
+        )}
+      </View>
+    ));
+  };
+
   return (
     <View style={styles.container}>
       {/* 顶部提示 */}
@@ -47,7 +91,7 @@ export default observer(() => {
         </Text>
       </View>
 
-      {/* 服务类型Tabs - 减小高度并使用更紧凑的布局 */}
+      {/* 服务类型Tabs */}
       <View style={styles.tabsWrapper}>
         <ScrollView 
           horizontal 
@@ -64,26 +108,7 @@ export default observer(() => {
         style={styles.categoryList}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.categorySection}>
-          <Text style={styles.sectionTitle}>窗帘</Text>
-          <View style={styles.categoryItem}>
-            <Text style={styles.categoryName}>直轨(单层)、直轨(双层)、罗马杆(单层)</Text>
-          </View>
-        </View>
-
-        <View style={styles.categorySection}>
-          <Text style={styles.sectionTitle}>遮阳帘</Text>
-          <View style={styles.categoryItem}>
-            <Text style={styles.categoryName}>直轨(单层)、直轨(双层)、罗马杆(单层)</Text>
-          </View>
-        </View>
-
-        <View style={styles.categorySection}>
-          <Text style={styles.sectionTitle}>地毯</Text>
-          <View style={styles.categoryItem}>
-            <Text style={styles.categoryName}>电动窗帘、遮阳帘</Text>
-          </View>
-        </View>
+        {renderCategoryTree(selectedTree)}
       </ScrollView>
 
       {/* 底部按钮 */}
@@ -117,7 +142,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#EEF1F7",
   },
   tabsContainer: {
-    maxHeight: 36, // 减小Tab的高度
+    maxHeight: 36,
   },
   tabsContent: {
     paddingHorizontal: 12,
@@ -125,13 +150,21 @@ const styles = StyleSheet.create({
   tabItem: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 8, // 减小内边距
+    paddingVertical: 8,
     paddingHorizontal: 12,
     marginRight: 16,
+  },
+  activeTabItem: {
+    backgroundColor: '#F5F7FA',
+    borderRadius: 4,
   },
   tabText: {
     fontSize: 13,
     color: "#303133",
+  },
+  activeTabText: {
+    color: "#2A6AE9",
+    fontWeight: "500",
   },
   selectedCountBadge: {
     backgroundColor: "#2A6AE9",
@@ -155,10 +188,19 @@ const styles = StyleSheet.create({
   categorySection: {
     marginTop: 12,
   },
+  childSection: {
+    marginLeft: 12,
+    marginTop: 8,
+  },
   sectionTitle: {
     fontSize: 14,
     color: "#303133",
     fontWeight: "500",
+    marginBottom: 8,
+  },
+  sectionSubtitle: {
+    fontSize: 13,
+    color: "#606266",
     marginBottom: 8,
   },
   categoryItem: {
