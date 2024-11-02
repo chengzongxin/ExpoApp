@@ -47,21 +47,23 @@ export default observer(() => {
 
   const handleLevel1CheckboxChange = (level1: ServiceTypeTreeDO, checked: boolean) => {
     selectLevelAndChildren(level1, 1);
-    checkLevelAndChildren(level1, checked);
+    checkChildrenLevel(level1, checked);
   }
 
   const handleLevel2CheckboxChange = (level2: ServiceTypeTreeDO, checked: boolean) => {
     selectLevelAndChildren(level2, 2);
-    checkLevelAndChildren(level2, checked);
+    checkChildrenLevel(level2, checked);
+    checkParentLevel(level2, checked);
   }
 
   const handleLevel3CheckboxChange = (level3: ServiceTypeTreeDO, checked: boolean) => {
     selectLevelAndChildren(level3, 3);
-    checkLevelAndChildren(level3, checked);
+    checkChildrenLevel(level3, checked);
+    checkParentLevel(level3, checked);
   }
 
   // 勾选或者取消勾选所有子节点
-  const checkLevelAndChildren = (level: ServiceTypeTreeDO, checked: boolean) => {
+  const checkChildrenLevel = (level: ServiceTypeTreeDO, checked: boolean) => {
     level.checked = checked;
     level.children?.forEach(item => {
       item.checked = checked;
@@ -70,6 +72,56 @@ export default observer(() => {
       });
     });
   }
+
+  // 勾选或者取消勾选所有父节点
+  const checkParentLevel = (level: ServiceTypeTreeDO, checked: boolean) => {
+    // 获取当前树
+    const currentTree = store.getCurrentCategoryTree();
+    
+    // 查找父节点的辅助函数
+    const findParentNode = (
+      tree: ServiceTypeTreeDO[],
+      targetId: number
+    ): ServiceTypeTreeDO | null => {
+      for (const node of tree) {
+        // 如果当前节点的子节点中包含目标节点，则当前节点就是父节点
+        if (node.children?.some(child => child.id === targetId)) {
+          return node;
+        }
+        // 递归检查子节点
+        if (node.children?.length) {
+          const found = findParentNode(node.children, targetId);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+
+    // 检查节点的所有子节点是否都被选中
+    const areAllChildrenChecked = (node: ServiceTypeTreeDO): boolean => {
+      if (!node.children?.length) return true;
+      return node.children.every(child => {
+        if (child.children?.length) {
+          return child.checked && areAllChildrenChecked(child);
+        }
+        return child.checked;
+      });
+    };
+
+    // 查找父节点并更新其状态
+    const updateParentStatus = (childNode: ServiceTypeTreeDO) => {
+      const parent = findParentNode(currentTree, childNode.id);
+      if (parent) {
+        // 更新父节点的选中状态
+        parent.checked = areAllChildrenChecked(parent);
+        // 递归处理父节点的父节点
+        updateParentStatus(parent);
+      }
+    };
+
+    // 开始处理
+    updateParentStatus(level);
+  };
 
   // 选择所有子节点
   const selectLevelAndChildren = (level: ServiceTypeTreeDO, levelNum: number) => {
