@@ -101,14 +101,11 @@ export default observer(() => {
 
       {/* 服务类型Tabs */}
       <View style={styles.tabsWrapper}>
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false}
-          style={styles.tabsContainer}
-          contentContainerStyle={styles.tabsContent}
-        >
-          {store.serviceTypes.map((item, index) => renderServiceTypeTab(item, index))}
-        </ScrollView>
+        <View style={styles.tabsContainer}>
+          <View style={styles.tabsContent}>
+            {store.serviceTypes.map((item, index) => renderServiceTypeTab(item, index))}
+          </View>
+        </View>
       </View>
 
       {/* 品类列表 */}
@@ -154,13 +151,17 @@ const styles = StyleSheet.create({
   },
   tabsContent: {
     paddingHorizontal: 12,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
   },
   tabItem: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: 'center',
     paddingVertical: 8,
     paddingHorizontal: 12,
-    marginRight: 16,
   },
   activeTabItem: {
     backgroundColor: '#F5F7FA',
@@ -200,34 +201,42 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 15,
     color: "#303133",
-    fontWeight: "500",
+    fontWeight: "600",
     marginBottom: 12,
   },
   levelContainer: {
     flexDirection: 'row',
-    backgroundColor: '#F5F7FA',
     borderRadius: 4,
-    padding: 12,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#EBEEF5',
   },
   level2Container: {
-    flex: 2, // 占据左侧较小空间
+    flex: 2,
     borderRightWidth: 1,
     borderRightColor: '#EBEEF5',
-    paddingRight: 12,
+    backgroundColor: '#EBF3FF',
   },
   level2Item: {
     paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EBEEF5',
   },
   level2Text: {
     fontSize: 14,
-    color: '#606266',
+    color: '#303133',
+    fontWeight: "500",
   },
   level3Container: {
-    flex: 3, // 占据右侧较大空间
-    paddingLeft: 12,
+    flex: 3,
+    backgroundColor: '#FFFFFF',
   },
   level3Wrapper: {
     paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EBEEF5',
   },
   level3Names: {
     fontSize: 14,
