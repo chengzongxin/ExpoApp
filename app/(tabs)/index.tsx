@@ -8,6 +8,9 @@ export default function HomeScreen() {
       <TouchableOpacity onPress={() => router.push('/(tabs)/serviceCategorySelection')}>
         <Text style={{color:'red', fontSize:20}}>Go to Service Category Selection</Text>
       </TouchableOpacity>
+      <TouchableOpacity onPress={() => router.push('/(tabs)/serviceCategoryCheck')}>
+        <Text style={{color:'red', fontSize:20}}>Go to Service Category Check</Text>
+      </TouchableOpacity>
     </View>
   );
 }
