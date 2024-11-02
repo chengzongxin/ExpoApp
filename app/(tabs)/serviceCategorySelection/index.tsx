@@ -48,18 +48,38 @@ export default observer(() => {
   const handleLevel1CheckboxChange = (level1: ServiceTypeTreeDO, checked: boolean) => {
     selectLevelAndChildren(level1, 1);
     checkChildrenLevel(level1, checked);
+    const checkedNodes = getCheckedNodes();
+    store.storeCurrentCheckedNodes(checkedNodes);
   }
 
   const handleLevel2CheckboxChange = (level2: ServiceTypeTreeDO, checked: boolean) => {
     selectLevelAndChildren(level2, 2);
     checkChildrenLevel(level2, checked);
     checkParentLevel(level2, checked);
+    const checkedNodes = getCheckedNodes();
+    store.storeCurrentCheckedNodes(checkedNodes);
   }
 
   const handleLevel3CheckboxChange = (level3: ServiceTypeTreeDO, checked: boolean) => {
     selectLevelAndChildren(level3, 3);
     checkChildrenLevel(level3, checked);
     checkParentLevel(level3, checked);
+    const checkedNodes = getCheckedNodes();
+    store.storeCurrentCheckedNodes(checkedNodes);
+  }
+
+  // 选择所有子节点
+  const selectLevelAndChildren = (level: ServiceTypeTreeDO, levelNum: number) => {
+    if (levelNum === 1) {
+      store.selectedLevel1 = level;
+      store.selectedLevel2 = level.children?.[0];
+      store.selectedLevel3 = level.children?.[0]?.children?.[0];
+    } else if (levelNum === 2) {
+      store.selectedLevel2 = level;
+      store.selectedLevel3 = level.children?.[0];
+    } else if (levelNum === 3) {
+      store.selectedLevel3 = level;
+    }
   }
 
   // 勾选或者取消勾选所有子节点
@@ -123,19 +143,34 @@ export default observer(() => {
     updateParentStatus(level);
   };
 
-  // 选择所有子节点
-  const selectLevelAndChildren = (level: ServiceTypeTreeDO, levelNum: number) => {
-    if (levelNum === 1) {
-      store.selectedLevel1 = level;
-      store.selectedLevel2 = level.children?.[0];
-      store.selectedLevel3 = level.children?.[0]?.children?.[0];
-    } else if (levelNum === 2) {
-      store.selectedLevel2 = level;
-      store.selectedLevel3 = level.children?.[0];
-    } else if (levelNum === 3) {
-      store.selectedLevel3 = level;
-    }
-  }
+  // 获取树中所有勾选的节点以及递归子节点
+  const getCheckedNodes = () => {
+    // 获取当前树
+    const currentTree = store.getCurrentCategoryTree();
+    
+    // 存储所有选中的节点
+    const checkedNodes: ServiceTypeTreeDO[] = [];
+    
+    // 递归遍历树并收集选中的节点
+    const collectCheckedNodes = (nodes: ServiceTypeTreeDO[]) => {
+      nodes.forEach(node => {
+        // 如果当前节点被选中，并且没有子节点，将其添加到结果数组中
+        if (node.checked && !node.children?.length) {
+          checkedNodes.push(node);
+        }
+        
+        // 如果有子节点，递归处理子节点
+        if (node.children?.length) {
+          collectCheckedNodes(node.children);
+        }
+      });
+    };
+    
+    // 开始收集选中节点
+    collectCheckedNodes(currentTree);
+    
+    return checkedNodes;
+  };
 
   return (
     <View style={styles.container}>
@@ -170,17 +205,7 @@ export default observer(() => {
                 </Text>
 
                 {(() => {
-                  // const tab = item.serviceTypeName;
-                  let selectedCount = 0;
-                  // if (tab === "测量") {
-                  //   selectedCount = store.CategoriesSelected1.length;
-                  // } else if (tab === "安装") {
-                  //   selectedCount = store.CategoriesSelected2.length;
-                  // } else if (tab === "维修") {
-                  //   selectedCount = store.CategoriesSelected3.length;
-                  // }
-                  // selectedCount = store.selectedCategories[index].length;
-                  console.log("Selected Count:", selectedCount); // 调试输出
+                  let selectedCount = store.getCurrentCheckedNodes(index).length;
                   return selectedCount > 0 ? (
                     <View style={styles.countView}>
                       <Text style={styles.counttv}>{selectedCount}</Text>
@@ -475,7 +500,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#F5F7FA",
-    justifyContent: "space-between",
+    justifyContent: "space-evenly",
     alignContent: "center",
     paddingLeft: 8,
     paddingBottom: 7,
@@ -485,7 +510,7 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "space-evenly",
     alignContent: "center",
     paddingLeft: 8,
     paddingRight: 8,
@@ -504,7 +529,7 @@ const styles = StyleSheet.create({
   subcategoryFirst: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "space-evenly",
     flex: 1,
     paddingRight: 8,
   },

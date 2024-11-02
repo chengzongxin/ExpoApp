@@ -222,13 +222,19 @@ const data2 = {
 };
 
 export default class ServiceCategoryStore {
+  // 当前tab索引
+  currentTabIdx: number = 0;
+  currentTabName: string = '';
+  // 服务类型
   serviceTypes: ServiceTypeConfig[] = [];
+  // 分类树
   categoryTree1: ServiceTypeTreeDO[] = [];
   categoryTree2: ServiceTypeTreeDO[] = [];
   categoryTree3: ServiceTypeTreeDO[] = [];
-
-  currentTabIdx: number = 0;
-  currentTabName: string = '';
+  // 分类树选中节点
+  categoryCheckedNodes1: ServiceTypeTreeDO[] = [];
+  categoryCheckedNodes2: ServiceTypeTreeDO[] = [];
+  categoryCheckedNodes3: ServiceTypeTreeDO[] = [];
 
   // 设置选择高亮
   selectedLevel1: ServiceTypeTreeDO | null = null;
@@ -278,6 +284,27 @@ export default class ServiceCategoryStore {
       return this.categoryTree2;
     } else if (this.currentTabIdx === 2) {
       return this.categoryTree3;
+    }
+    return [];
+  }
+
+  storeCurrentCheckedNodes(checkedNodes: ServiceTypeTreeDO[]) {
+    if (this.currentTabIdx === 0) {
+      this.categoryCheckedNodes1 = checkedNodes;
+    } else if (this.currentTabIdx === 1) {
+      this.categoryCheckedNodes2 = checkedNodes;
+    } else if (this.currentTabIdx === 2) {
+      this.categoryCheckedNodes3 = checkedNodes;
+    }
+  }
+
+  getCurrentCheckedNodes(index: number): ServiceTypeTreeDO[] {
+    if (index === 0) {
+      return this.categoryCheckedNodes1;
+    } else if (index === 1) {
+      return this.categoryCheckedNodes2;
+    } else if (index === 2) {
+      return this.categoryCheckedNodes3;
     }
     return [];
   }
