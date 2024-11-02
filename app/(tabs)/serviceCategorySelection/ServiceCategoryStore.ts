@@ -241,14 +241,6 @@ export default class ServiceCategoryStore {
   selectedLevel2: ServiceTypeTreeDO | null = null;
   selectedLevel3: ServiceTypeTreeDO | null = null;
 
-  checkedLevel1: ServiceTypeTreeDO | null = null;
-  checkedLevel2: ServiceTypeTreeDO | null = null;
-  checkedLevel3: ServiceTypeTreeDO | null = null;
-
-  selectedCategories: ServiceTypeTreeDO[][][] = [[[]], [[]], [[]]];
-  checkedCategories: ServiceTypeTreeDO[][][] = [[[]], [[]], [[]]];
-  
-  
   constructor() {
     makeAutoObservable(this);
     this.fetchAllServiceTypes();
@@ -309,65 +301,7 @@ export default class ServiceCategoryStore {
     return [];
   }
 
-  checkTree(item: ServiceTypeTreeDO, level: number, checked: boolean) {
-    const tree = this.getCurrentCategoryTree();
-    if (level === 1) {
-      // this.checkedLevel1 = checked ? item : null;
-    } else if (level === 2) {
-      // this.checkedLevel2 = checked ? item : null;
-    } else if (level === 3) {
-      // this.checkedLevel3 = checked ? item : null;
-      const foundNode = this.findNodeById(item.id);
-      if (foundNode) {
-        this.checkedLevel3 = checked ? foundNode : null;
-      }
-    }
-  }
-
-
-  findNodeById(id: number): ServiceTypeTreeDO | null {
-    const tree = this.getCurrentCategoryTree();
-    const foundNode = this.findNodeInTree(tree, id);
-    return foundNode;
-  }
-
-  findNodeInTree(tree: ServiceTypeTreeDO[], id: number): ServiceTypeTreeDO | null {
-    let foundNode: ServiceTypeTreeDO | null = null;
-    for (let i = 0; i < tree.length; i++) {
-      if (tree[i].id === id) {
-        foundNode = tree[i];
-        break;
-      }
-      if (tree[i].children && tree[i].children.length > 0) {
-        foundNode = this.findNodeInTree(tree[i].children, id);
-        if (foundNode) {
-          break;
-        }
-      }
-    }
-    return foundNode;
-  }
-
-
-  checkLevel(tabIdx: number, level: number, checked: boolean, item: ServiceTypeTreeDO) {
-    if (level === 1) {
-      this.checkedLevel1 = checked ? this.selectedLevel1 : null;
-    } else if (level === 2) {
-      
-    } else if (level === 3) {
-      console.log('checkedLevel3', checked);
-      // if (checked) {
-      //   this.checkedCategories[tabIdx][level - 1].push(item);
-      // } else {
-      //   this.checkedCategories[tabIdx][level - 1] = this.checkedCategories[tabIdx][level - 1].filter(item => item.id !== item.id);
-      // }
-    }
-  }
-
-  // 获取子项目的最低层的选中项目数量
-  getLowestLevelSelectedCount(level: number): number {
-    // const category = this.findCategoryById(categoryId, this.categoriesData);
-    // return category ? this.countSelected(category) : 0;
-    return 0;
+  getAllCheckedNodes(): ServiceTypeTreeDO[] {
+    return [...this.categoryCheckedNodes1, ...this.categoryCheckedNodes2, ...this.categoryCheckedNodes3];
   }
 }

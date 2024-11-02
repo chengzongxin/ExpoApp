@@ -235,7 +235,7 @@ export default observer(() => {
               <View style={[styles.subcategory]}>
                 <View style={styles.subcategorySecond}>
                   {(() => {
-                    const selectedCount = store.getLowestLevelSelectedCount(level1.id);
+                    const selectedCount = level1.children?.filter(item => item.checked).length;
                     return selectedCount > 0 ? (
                       <View style={styles.bluePoint} />
                     ) : null;
@@ -283,9 +283,7 @@ export default observer(() => {
                 <View style={styles.subcategorySecond}>
                   {/* 如果有选中项，显示选中数量 */}
                   {(() => {
-                    const selectedCount = store.getLowestLevelSelectedCount(
-                      level2.id
-                    );
+                    const selectedCount = level2.children?.filter(item => item.checked).length;
                     return selectedCount > 0 ? (
                       <View style={styles.bluePoint} />
                     ) : null;
@@ -346,7 +344,7 @@ export default observer(() => {
 
       {/* Submit button */}
       <CustomButton
-        // disabled={store.selectedLowestLevelCategories.length===0}
+        disabled={store.getAllCheckedNodes().length===0}
         style={styles.submitButton}
         onPress={() => {
           // 根据页面来源决定是否调用 setMasterServiceTypes 方法
