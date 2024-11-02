@@ -46,16 +46,43 @@ export default observer(() => {
   }
 
   const handleLevel1CheckboxChange = (level1: ServiceTypeTreeDO, checked: boolean) => {
-    store.checkTree(level1, 1, checked);
+    selectLevelAndChildren(level1, 1);
+    checkLevelAndChildren(level1, checked);
   }
 
   const handleLevel2CheckboxChange = (level2: ServiceTypeTreeDO, checked: boolean) => {
-    store.checkTree(level2, 2, checked);
+    selectLevelAndChildren(level2, 2);
+    checkLevelAndChildren(level2, checked);
   }
 
   const handleLevel3CheckboxChange = (level3: ServiceTypeTreeDO, checked: boolean) => {
-    level3.checked = checked;
-    store.checkTree(level3, 3, checked);
+    selectLevelAndChildren(level3, 3);
+    checkLevelAndChildren(level3, checked);
+  }
+
+  // 勾选或者取消勾选所有子节点
+  const checkLevelAndChildren = (level: ServiceTypeTreeDO, checked: boolean) => {
+    level.checked = checked;
+    level.children?.forEach(item => {
+      item.checked = checked;
+      item.children?.forEach(item2 => {
+        item2.checked = checked;
+      });
+    });
+  }
+
+  // 选择所有子节点
+  const selectLevelAndChildren = (level: ServiceTypeTreeDO, levelNum: number) => {
+    if (levelNum === 1) {
+      store.selectedLevel1 = level;
+      store.selectedLevel2 = level.children?.[0];
+      store.selectedLevel3 = level.children?.[0]?.children?.[0];
+    } else if (levelNum === 2) {
+      store.selectedLevel2 = level;
+      store.selectedLevel3 = level.children?.[0];
+    } else if (levelNum === 3) {
+      store.selectedLevel3 = level;
+    }
   }
 
   return (
@@ -148,9 +175,9 @@ export default observer(() => {
                     {level1.name}
                   </Text>
                   <CustomCheckbox
-                    checked={level1.selected}
-                      onChange={(checked) => {
-                        handleLevel1CheckboxChange(level1, checked);
+                    checked={level1.checked}
+                    onChange={(checked) => {
+                      handleLevel1CheckboxChange(level1, checked);
                     }}
                   />
                 </View>
@@ -198,7 +225,7 @@ export default observer(() => {
                     {level2.name}
                   </Text>
                   <CustomCheckbox
-                    checked={level2.selected}
+                    checked={level2.checked}
                     onChange={(checked) => {
                       handleLevel2CheckboxChange(level2, checked);
                     }}
