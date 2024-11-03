@@ -28,26 +28,12 @@ export default function TabLayout() {
       />
       
       <Tabs.Screen
-        name="serviceCategorySelection/index"
+        name="mine/index"
         options={{
-          title: "品类选择",
+          title: "我的",
           tabBarIcon: ({ focused, color }) => (
             <Ionicons 
-              name={focused ? "list" : "list-outline"}
-              size={24}
-              color={color}
-            />
-          ),
-        }}
-      />
-
-      <Tabs.Screen
-        name="serviceCategoryCheck/index"
-        options={{
-          title: "已选品类",
-          tabBarIcon: ({ focused, color }) => (
-            <Ionicons 
-              name={focused ? "checkmark-circle" : "checkmark-circle-outline"}
+              name={focused ? "person" : "person-outline"}
               size={24}
               color={color}
             />
