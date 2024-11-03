@@ -13,6 +13,7 @@ import ServiceCategoryStore from "./ServiceCategoryStore";
 import CustomButton from "@/components/CustomButton";
 import { router, useLocalSearchParams } from "expo-router";
 import { ServiceTypeConfig, ServiceTypeTreeDO } from "@/types";
+import { Stack } from 'expo-router';
 
 const images = {
   waringIcon: require("@/assets/images/common/icon_wrang.png"),
@@ -175,7 +176,7 @@ export default observer(() => {
   const handleSubmit = () => {
     const result = store.getResultData();
     router.push({
-      pathname: '/(tabs)/serviceCategoryCheck',
+      pathname: '/serviceCategoryCheck',
       params: {
         selectedCategories: JSON.stringify(result)
       }

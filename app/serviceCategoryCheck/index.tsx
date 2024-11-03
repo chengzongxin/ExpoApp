@@ -132,7 +132,7 @@ export default observer(() => {
       {/* 底部按钮 */}
       <CustomButton
         style={styles.submitButton}
-        onPress={() => router.push('/(tabs)/serviceCategorySelection')}
+        onPress={() => router.push('/serviceCategorySelection')}
       >
         <Text style={styles.submitText}>修改服务</Text>
       </CustomButton>

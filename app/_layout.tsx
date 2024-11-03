@@ -22,22 +22,30 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen 
-        name="serviceCategorySelection" 
+        name="serviceCategorySelection/index" 
         options={{ 
           headerShown: true,
-          title: "品类选择",
-          headerTitleStyle: { fontSize: 16 }
+          title: "服务类目选择",
+          headerTitleAlign: 'center',
+          headerTitleStyle: { 
+            fontSize: 16,
+            color: '#303133',
+          },
         }} 
       />
       <Stack.Screen 
-        name="serviceCategoryCheck" 
+        name="serviceCategoryCheck/index" 
         options={{ 
           headerShown: true,
-          title: "已选品类",
-          headerTitleStyle: { fontSize: 16 }
+          title: "已选服务类目",
+          headerTitleAlign: 'center',
+          headerTitleStyle: { 
+            fontSize: 16,
+            color: '#303133',
+          },
         }} 
       />
     </Stack>
