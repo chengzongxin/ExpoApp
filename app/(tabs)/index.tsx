@@ -5,8 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 export default function HomeScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>首页</Text>
-      
+
       {/* 功能入口区域 */}
       <View style={styles.menuContainer}>
         {/* 品类选择入口 */}
@@ -36,11 +35,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     padding: 16,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 24,
   },
   menuContainer: {
     flexDirection: 'row',

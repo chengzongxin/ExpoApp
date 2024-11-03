@@ -10,13 +10,18 @@ export default function TabLayout() {
         tabBarLabelStyle: {
           fontSize: 12,
         },
-        headerShown: false,
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
           title: "首页",
+          headerTitle: "首页",
+          headerTitleAlign: 'center',
+          headerTitleStyle: {
+            fontSize: 16,
+            color: '#303133',
+          },
           tabBarIcon: ({ focused, color }) => (
             <Ionicons 
               name={focused ? "home" : "home-outline"}
@@ -31,6 +36,12 @@ export default function TabLayout() {
         name="mine/index"
         options={{
           title: "我的",
+          headerTitle: "我的",
+          headerTitleAlign: 'center',
+          headerTitleStyle: {
+            fontSize: 16,
+            color: '#303133',
+          },
           tabBarIcon: ({ focused, color }) => (
             <Ionicons 
               name={focused ? "person" : "person-outline"}
