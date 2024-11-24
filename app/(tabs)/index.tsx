@@ -25,6 +25,16 @@ export default function HomeScreen() {
           <Ionicons name="checkmark-circle" size={24} color="#2A6AE9" />
           <Text style={styles.menuText}>已选品类</Text>
         </TouchableOpacity>
+        
+
+        {/* realm数据库入口 */}
+        <TouchableOpacity 
+          style={styles.menuItem}
+          onPress={() => router.push('/(realm)/db')}
+        >
+          <Ionicons name="at" size={24} color="#2A6AE9" />
+          <Text style={styles.menuText}>realm数据库</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
