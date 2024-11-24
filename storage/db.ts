@@ -1,8 +1,7 @@
 import Realm from 'realm';
-
- 
 import { Platform, PermissionsAndroid } from 'react-native';
 import RNFS from 'react-native-fs';
+import { DogSchema, PersonSchema } from './schemas';
 
 const SCHEMA_VERSION = 3;
 
@@ -11,63 +10,22 @@ const DB_PATH = Platform.select({
   ios: `${RNFS.DocumentDirectoryPath}/default.realm`,
   android: `${RNFS.DocumentDirectoryPath}/default.realm`,
 })!;
- 
-// 添加权限检查函数
-const checkAndRequestPermissions = async () => {
-  if (Platform.OS === 'android') {
-    try {
-      const granted = await PermissionsAndroid.requestMultiple([
-        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-      ]);
-      
-      return Object.values(granted).every(
-        permission => permission === PermissionsAndroid.RESULTS.GRANTED
-      );
-    } catch (err) {
-      console.error('权限请求错误:', err);
-      return false;
-    }
-  }
-  return true;
-};
 
 // 导出所有 schema 供其他模块使用
 export const ALL_SCHEMAS = [
-  
+  PersonSchema,
+  DogSchema
 ];
 
 // 初始化Realm数据库
 export const initDB = async () => {
   try {
-    // 先检查权限
-    // const hasPermissions = await checkAndRequestPermissions();
-    // if (!hasPermissions) {
-    //   throw new Error('未获得必要的存储权限');
-    // }
-
     const realm = await Realm.open({
       path: DB_PATH,
       schema: ALL_SCHEMAS,
       schemaVersion: SCHEMA_VERSION + 1,
       onMigration: (oldRealm, newRealm) => {
         console.log('数据库迁移开始，版本:', oldRealm.schemaVersion);
-        
-        if (oldRealm.schemaVersion < 3) {
- 
-          const oldObjects = oldRealm.objects('Room');
-          const newObjects = newRealm.objects('Room');
-
-          // 遍历所有对象进行数据迁移
-          for (let i = 0; i < oldObjects.length; i++) {
-            const oldObject = oldObjects[i];
-            newObjects[i]._id = oldObject.id || oldObject._id; // 处理主键迁移
-            
-            // 设置新增字段的默认值
-            newObjects[i].measureIds = oldObject.measureIds || [];
-            newObjects[i].measureCount = oldObject.measureCount || 0;
-          }
-        }
       }
     });
     console.log('数据库初始化成功，路径:', DB_PATH);
