@@ -28,6 +28,8 @@ function TaskList() {
   return (
     <View style={{ padding: 16 }}>
       <Text style={{ fontSize: 20 }}>任务列表</Text>
+      <Text style={{ fontSize: 20 }}>任务列表</Text>
+      <Text style={{ fontSize: 20 }}>任务列表</Text>
     </View>
   );
 }
