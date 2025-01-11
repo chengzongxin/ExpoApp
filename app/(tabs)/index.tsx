@@ -35,6 +35,24 @@ export default function HomeScreen() {
           <Ionicons name="at" size={24} color="#2A6AE9" />
           <Text style={styles.menuText}>realm数据库</Text>
         </TouchableOpacity>
+
+        {/* realm数据库入口 */}
+        <TouchableOpacity 
+          style={styles.menuItem}
+          onPress={() => router.push('/(realm)/db/index2')}
+        >
+          <Ionicons name="at" size={24} color="#2A6AE9" />
+          <Text style={styles.menuText}>realm数据库2</Text>
+        </TouchableOpacity>
+
+        {/* realm数据库入口 */}
+        <TouchableOpacity 
+          style={styles.menuItem}
+          onPress={() => router.push('/(realm)/db/index3')}
+        >
+          <Ionicons name="at" size={24} color="#2A6AE9" />
+          <Text style={styles.menuText}>realm数据库3</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );

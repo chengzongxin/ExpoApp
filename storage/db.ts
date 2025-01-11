@@ -1,7 +1,7 @@
 import Realm from 'realm';
 import { Platform, PermissionsAndroid } from 'react-native';
 import RNFS from 'react-native-fs';
-import { DogSchema, PersonSchema } from './schemas';
+import { CarSchema, DogSchema, PersonSchema } from './schemas';
 
 const SCHEMA_VERSION = 3;
 
@@ -14,7 +14,8 @@ const DB_PATH = Platform.select({
 // 导出所有 schema 供其他模块使用
 export const ALL_SCHEMAS = [
   PersonSchema,
-  DogSchema
+  DogSchema,
+  CarSchema
 ];
 
 // 初始化Realm数据库
